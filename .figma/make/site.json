@@ -1,0 +1,14 @@
+{
+  "title": "Solid Studio — Furniture Design & Consultation",
+  "description": "Solid Studio offers distinctive furniture designs and bespoke space consultations. Established 2026.",
+  "icons": {
+    "icon": "/src/assets/solid-studio-logo.svg"
+  },
+  "robots": {
+    "index": true
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

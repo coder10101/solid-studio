@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solid Studio — Video Outro Generator (16:9 & 9:16)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #171613;
+      --paper: #f1efe8;
+      --white: #faf9f5;
+      --muted: #77746c;
+      --line: #cbc7bc;
+      --oxblood: #701419;
+      --font-serif: "Instrument Serif", Georgia, serif;
+      --font-sans: "Montserrat", -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #11100e;
+      color: #edebe4;
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    header {
+      padding: 24px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #282622;
+      background: #161512;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-title h1 {
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .brand-title span {
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.05em;
+    }
+
+    .main-layout {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      flex: 1;
+      height: calc(100vh - 73px);
+    }
+
+    /* Controls Panel */
+    .controls-panel {
+      background: #181714;
+      border-right: 1px solid #282622;
+      padding: 32px 28px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .control-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #9e9a90;
+      font-weight: 500;
+    }
+
+    .button-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .btn-toggle {
+      background: #23221e;
+      border: 1px solid #36342e;
+      color: #d1cebe;
+      padding: 12px 14px;
+      border-radius: 4px;
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .btn-toggle:hover {
+      background: #2f2d28;
+      border-color: #555248;
+    }
+
+    .btn-toggle.active {
+      background: var(--oxblood);
+      border-color: var(--oxblood);
+      color: #ffffff;
+    }
+
+    .color-swatches {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .swatch-btn {
+      background: #23221e;
+      border: 1px solid #36342e;
+      padding: 10px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      font-size: 10px;
+      color: #bbb7a9;
+      font-family: var(--font-sans);
+      transition: all 0.2s;
+    }
+
+    .swatch-circle {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .swatch-paper { background: #f1efe8; }
+    .swatch-dark { background: #171613; }
+    .swatch-trans {
+      background: repeating-conic-gradient(#333 0% 25%, #222 0% 50%) 50% / 10px 10px;
+    }
+
+    .swatch-btn.active {
+      border-color: #9e9a90;
+      background: #312f29;
+      color: #fff;
+    }
+
+    .range-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .range-val {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #8c887e;
+    }
+
+    input[type="range"] {
+      accent-color: var(--oxblood);
+      cursor: pointer;
+    }
+
+    .export-actions {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 20px;
+      border-top: 1px solid #282622;
+    }
+
+    .btn-record {
+      background: var(--oxblood);
+      color: white;
+      border: 0;
+      padding: 16px 20px;
+      border-radius: 4px;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-record:hover {
+      background: #8b191f;
+    }
+
+    .btn-record:active {
+      transform: scale(0.99);
+    }
+
+    .btn-record.recording {
+      background: #992222;
+      animation: pulse 1.2s infinite;
+    }
+
+    .btn-secondary {
+      background: #23221e;
+      border: 1px solid #36342e;
+      color: #edebe4;
+      padding: 12px;
+      border-radius: 4px;
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: #2c2a25;
+      border-color: #555;
+    }
+
+    /* Stage / Viewport */
+    .stage-container {
+      background: #0d0c0a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stage-wrapper {
+      position: relative;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px #22211d;
+      border-radius: 2px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+    }
+
+    #renderCanvas {
+      display: block;
+      max-width: 100%;
+      max-height: 70vh;
+      object-fit: contain;
+    }
+
+    .stage-bar {
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: #181714;
+      padding: 12px 24px;
+      border-radius: 30px;
+      border: 1px solid #282622;
+      font-size: 11px;
+      color: #a4a095;
+    }
+
+    .btn-icon {
+      background: transparent;
+      border: 0;
+      color: #edebe4;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-family: var(--font-sans);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .btn-icon:hover {
+      color: #fff;
+    }
+
+    .progress-bar-wrap {
+      width: 220px;
+      height: 4px;
+      background: #282622;
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--oxblood);
+      transition: width 0.05s linear;
+    }
+
+    .badge-resolution {
+      font-size: 10px;
+      color: #77746c;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand-title">
+      <h1>Solid Studio</h1>
+      <span>/ Video Outro Animation Suite</span>
+    </div>
+    <div class="badge-resolution" id="resBadge">1920 × 1080 · 60 FPS</div>
+  </header>
+
+  <div class="main-layout">
+    <div class="controls-panel">
+      <!-- Aspect Ratio -->
+      <div class="control-group">
+        <label class="control-label">Aspect Ratio / Format</label>
+        <div class="button-group">
+          <button class="btn-toggle active" id="btn16x9" onclick="setRatio('16x9')">16:9 Landscape</button>
+          <button class="btn-toggle" id="btn9x16" onclick="setRatio('9x16')">9:16 Vertical</button>
+        </div>
+      </div>
+
+      <!-- Theme / Background -->
+      <div class="control-group">
+        <label class="control-label">Background Style</label>
+        <div class="color-swatches">
+          <button class="swatch-btn active" id="swatchPaper" onclick="setTheme('paper')">
+            <span class="swatch-circle swatch-paper"></span>
+            Paper
+          </button>
+          <button class="swatch-btn" id="swatchDark" onclick="setTheme('dark')">
+            <span class="swatch-circle swatch-dark"></span>
+            Dark Ink
+          </button>
+          <button class="swatch-btn" id="swatchTrans" onclick="setTheme('transparent')">
+            <span class="swatch-circle swatch-trans"></span>
+            Transparent
+          </button>
+        </div>
+      </div>
+
+      <!-- Duration -->
+      <div class="control-group">
+        <div class="range-wrap">
+          <div class="range-val">
+            <label class="control-label">Total Duration</label>
+            <span id="durationVal">3.5s</span>
+          </div>
+          <input type="range" id="durationSlider" min="2.5" max="6.0" step="0.5" value="3.5" oninput="setDuration(this.value)">
+        </div>
+      </div>
+
+      <!-- End Action -->
+      <div class="control-group">
+        <label class="control-label">Outro End Transition</label>
+        <div class="button-group">
+          <button class="btn-toggle active" id="endHold" onclick="setEndAction('hold')">Hold Frame</button>
+          <button class="btn-toggle" id="endFade" onclick="setEndAction('fade')">Fade Out</button>
+        </div>
+      </div>
+
+      <!-- Export Actions -->
+      <div class="export-actions">
+        <button class="btn-record" id="btnRecord" onclick="recordVideo()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+          <span id="recordBtnText">Download Video (MP4)</span>
+        </button>
+        <button class="btn-secondary" onclick="exportFrame()">
+          Save Current Frame (PNG)
+        </button>
+      </div>
+    </div>
+
+    <!-- Live Stage -->
+    <div class="stage-container">
+      <div class="stage-wrapper" id="stageWrapper">
+        <canvas id="renderCanvas" width="1920" height="1080"></canvas>
+      </div>
+
+      <div class="stage-bar">
+        <button class="btn-icon" onclick="togglePlay()" id="btnPlayPause">
+          <span id="playIcon">⏸</span> <span id="playText">Pause</span>
+        </button>
+        <button class="btn-icon" onclick="replay()">
+          <span>↺</span> Replay
+        </button>
+        <div class="progress-bar-wrap">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <span id="timecode">0.0s / 3.5s</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let ratio = '16x9'; // '16x9' or '9x16'
+    let theme = 'paper'; // 'paper', 'dark', 'transparent'
+    let duration = 3.5;
+    let endAction = 'hold'; // 'hold', 'fade'
+    let isPlaying = true;
+    let isRecording = false;
+    let currentTime = 0;
+    let lastTimestamp = 0;
+
+    const canvas = document.getElementById('renderCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Preload logo image
+    const logoImg = new Image();
+    logoImg.src = 'src/assets/solid-studio-logo.svg';
+
+    const invertedLogoImg = new Image();
+    // Create an inverted white logo data URL for dark mode
+    fetch('src/assets/solid-studio-logo.svg')
+      .then(res => res.text())
+      .then(svgText => {
+        const whiteSvg = svgText
+          .replace(/fill="#000000"/g, 'fill="#FAF9F5"')
+          .replace(/fill="#701419"/g, 'fill="#9E2228"');
+        const blob = new Blob([whiteSvg], { type: 'image/svg+xml' });
+        invertedLogoImg.src = URL.createObjectURL(blob);
+      });
+
+    function setRatio(r) {
+      ratio = r;
+      document.getElementById('btn16x9').classList.toggle('active', r === '16x9');
+      document.getElementById('btn9x16').classList.toggle('active', r === '9x16');
+      
+      if (r === '16x9') {
+        canvas.width = 1920;
+        canvas.height = 1080;
+        document.getElementById('resBadge').textContent = '1920 × 1080 · 60 FPS';
+      } else {
+        canvas.width = 1080;
+        canvas.height = 1920;
+        document.getElementById('resBadge').textContent = '1080 × 1920 · 60 FPS (9:16)';
+      }
+      replay();
+    }
+
+    function setTheme(t) {
+      theme = t;
+      document.getElementById('swatchPaper').classList.toggle('active', t === 'paper');
+      document.getElementById('swatchDark').classList.toggle('active', t === 'dark');
+      document.getElementById('swatchTrans').classList.toggle('active', t === 'transparent');
+    }
+
+    function setDuration(d) {
+      duration = parseFloat(d);
+      document.getElementById('durationVal').textContent = duration.toFixed(1) + 's';
+    }
+
+    function setEndAction(action) {
+      endAction = action;
+      document.getElementById('endHold').classList.toggle('active', action === 'hold');
+      document.getElementById('endFade').classList.toggle('active', action === 'fade');
+    }
+
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      document.getElementById('playIcon').textContent = isPlaying ? '⏸' : '▶';
+      document.getElementById('playText').textContent = isPlaying ? 'Pause' : 'Play';
+      if (isPlaying) {
+        lastTimestamp = performance.now();
+        requestAnimationFrame(renderLoop);
+      }
+    }
+
+    function replay() {
+      currentTime = 0;
+      isPlaying = true;
+      document.getElementById('playIcon').textContent = '⏸';
+      document.getElementById('playText').textContent = 'Pause';
+      lastTimestamp = performance.now();
+      requestAnimationFrame(renderLoop);
+    }
+
+    // Cubic bezier implementation matching CSS cubic-bezier(.22, 1, .36, 1)
+    function easeOutCubicBezier(t) {
+      // Approximation of (.22, 1, .36, 1)
+      const ts = t * t;
+      const tc = ts * t;
+      return 1.4 * tc - 2.4 * ts + 2.0 * t;
+    }
+
+    function cubicBezierLine(t) {
+      // (.65, 0, .35, 1)
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    function render(time) {
+      const w = canvas.width;
+      const h = canvas.height;
+
+      // 1. Clear / Background
+      ctx.clearRect(0, 0, w, h);
+      if (theme === 'paper') {
+        ctx.fillStyle = '#f1efe8';
+        ctx.fillRect(0, 0, w, h);
+      } else if (theme === 'dark') {
+        ctx.fillStyle = '#171613';
+        ctx.fillRect(0, 0, w, h);
+      }
+
+      // Check global fade out
+      let globalAlpha = 1.0;
+      if (endAction === 'fade' && time > duration - 0.7) {
+        globalAlpha = Math.max(0, (duration - time) / 0.7);
+      }
+      ctx.globalAlpha = globalAlpha;
+
+      // Sizing
+      // Base logo width on 16:9 is 240px, on 9:16 is 380px
+      const logoW = ratio === '16x9' ? 240 : 380;
+      const logoH = logoW * (545 / 485);
+      const centerX = w / 2;
+      // Vertically center the unit (logo + line)
+      // Vertically center the unit (logo + line)
+      const centerY = (h - (ratio === '16x9' ? 32 : 44)) / 2;
+
+      // Animation parameters
+      // logoReveal: 0s to 1.15s
+      const tLogo = Math.min(1.0, Math.max(0, time / 1.15));
+      const pLogo = Math.min(1.0, Math.max(0, easeOutCubicBezier(tLogo)));
+      const logoTranslateY = 24 * (1.0 - pLogo);
+      const logoOpacity = Math.min(1.0, pLogo * 1.2);
+
+      // Draw Logo with Reveal clip-path (from bottom up)
+      if (logoOpacity > 0.01) {
+        ctx.save();
+        ctx.globalAlpha = globalAlpha * logoOpacity;
+
+        // Clip-path inset(100% 0 0) to inset(0): reveals from bottom to top
+        const clipHeight = logoH * pLogo;
+        const clipY = (centerY - logoH / 2) + (logoH - clipHeight) + logoTranslateY;
+        
+        ctx.beginPath();
+        ctx.rect(centerX - logoW / 2 - 10, clipY, logoW + 20, clipHeight + 20);
+        ctx.clip();
+
+        const imgToDraw = theme === 'dark' ? (invertedLogoImg.complete ? invertedLogoImg : logoImg) : logoImg;
+        ctx.drawImage(
+          imgToDraw,
+          centerX - logoW / 2,
+          centerY - logoH / 2 + logoTranslateY,
+          logoW,
+          logoH
+        );
+        ctx.restore();
+      }
+
+      // 2. Line underneath logo
+      const lineY = centerY + logoH / 2 + (ratio === '16x9' ? 32 : 44);
+      const lineWidth = logoW;
+      const lineX = centerX - lineWidth / 2;
+
+      // Base line
+      const baseLineColor = theme === 'dark' ? '#3d3a33' : '#cbc7bc';
+      ctx.save();
+      ctx.globalAlpha = globalAlpha * Math.min(1.0, Math.max(0, (time - 0.2) / 0.5));
+      ctx.fillStyle = baseLineColor;
+      ctx.fillRect(lineX, lineY, lineWidth, 1.5);
+      ctx.restore();
+
+      // Traveling oxblood line
+      if (time >= 0.45 && time <= 1.85) {
+        const tLine = Math.min(1.0, Math.max(0, (time - 0.45) / 1.25));
+        const pLine = cubicBezierLine(tLine);
+        const redLineX = lineX + (pLine * 2 - 1) * lineWidth;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(lineX, lineY - 1, lineWidth, 3.5);
+        ctx.clip();
+
+        ctx.fillStyle = theme === 'dark' ? '#9E2228' : '#701419';
+        ctx.fillRect(redLineX, lineY - 0.5, lineWidth, 2.5);
+        ctx.restore();
+      }
+
+      ctx.globalAlpha = 1.0;
+    }
+
+    function renderLoop(timestamp) {
+      if (!lastTimestamp) lastTimestamp = timestamp;
+      const dt = (timestamp - lastTimestamp) / 1000;
+      lastTimestamp = timestamp;
+
+      if (isPlaying) {
+        currentTime += dt;
+        if (currentTime >= duration) {
+          currentTime = duration;
+          isPlaying = false;
+          document.getElementById('playIcon').textContent = '▶';
+          document.getElementById('playText').textContent = 'Play';
+        }
+      }
+
+      render(currentTime);
+
+      // UI updates
+      const pct = Math.min(100, (currentTime / duration) * 100);
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('timecode').textContent = `${currentTime.toFixed(1)}s / ${duration.toFixed(1)}s`;
+
+      if (isPlaying) {
+        requestAnimationFrame(renderLoop);
+      }
+    }
+
+    // Export current frame
+    function exportFrame() {
+      render(currentTime);
+      const link = document.createElement('a');
+      link.download = `solid-studio-outro-${ratio}-${theme}-${currentTime.toFixed(1)}s.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    // Video Recording via MediaRecorder
+    async function recordVideo() {
+      if (isRecording) return;
+      isRecording = true;
+      isPlaying = false;
+
+      const recordBtn = document.getElementById('btnRecord');
+      const recordText = document.getElementById('recordBtnText');
+      recordBtn.classList.add('recording');
+      recordText.textContent = 'Recording 60 FPS...';
+
+      // Pick best supported MIME type
+      let mimeType = 'video/mp4;codecs=avc1';
+      if (!MediaRecorder.isTypeSupported(mimeType)) {
+        mimeType = 'video/mp4';
+      }
+      if (!MediaRecorder.isTypeSupported(mimeType)) {
+        mimeType = 'video/webm;codecs=vp9';
+      }
+      if (!MediaRecorder.isTypeSupported(mimeType)) {
+        mimeType = 'video/webm';
+      }
+
+      const stream = canvas.captureStream(60);
+      const recorder = new MediaRecorder(stream, {
+        mimeType: mimeType,
+        videoBitsPerSecond: 25000000 // 25 Mbps high fidelity
+      });
+
+      const chunks = [];
+      recorder.ondataavailable = e => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+
+      recorder.onstop = () => {
+        const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
+        const blob = new Blob(chunks, { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `solid-studio-outro-${ratio}-${theme}.${ext}`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        isRecording = false;
+        recordBtn.classList.remove('recording');
+        recordText.textContent = 'Download Video (MP4)';
+        replay();
+      };
+
+      recorder.start();
+
+      // Deterministic frame-by-frame 60fps recording
+      const fps = 60;
+      const totalFrames = Math.round(duration * fps);
+      for (let f = 0; f <= totalFrames; f++) {
+        const t = f / fps;
+        render(t);
+        currentTime = t;
+        const pct = (f / totalFrames) * 100;
+        document.getElementById('progressFill').style.width = pct + '%';
+        document.getElementById('timecode').textContent = `${t.toFixed(1)}s / ${duration.toFixed(1)}s`;
+        await new Promise(r => setTimeout(r, 1000 / fps));
+      }
+
+      recorder.stop();
+    }
+
+    // Start on load
+    logoImg.onload = () => {
+      replay();
+    };
+    if (logoImg.complete) {
+      replay();
+    }
+  </script>
+</body>
+</html>
