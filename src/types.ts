@@ -112,6 +112,7 @@ export interface ProcessProps {
 
 export interface FooterProps {
   contactInfo: ContactInfo;
+  onNavigate?: (path: string) => void;
 }
 
 export interface InquiryModalProps {

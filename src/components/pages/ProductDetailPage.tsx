@@ -71,41 +71,34 @@ export default function ProductDetailPage({
 
   return (
     <div className="product-monograph">
-      {/* Top Breadcrumb Bar */}
+      {/* Refined Architectural Breadcrumb */}
       <div className="product-monograph__topbar">
-        <div className="product-monograph__breadcrumbs">
-          <a
-            href="#/"
-            onClick={(e) => {
-              e.preventDefault();
-              onNavigate("#/");
-            }}
-          >
-            Studio Overview
-          </a>
-          <span>/</span>
+        <nav className="monograph-breadcrumb" aria-label="Breadcrumb">
           <a
             href="#/collection"
+            className="monograph-breadcrumb__link"
             onClick={(e) => {
               e.preventDefault();
               onNavigate("#/collection");
             }}
           >
-            Collection
+            {"←"} <span>Collection</span>
           </a>
-          <span>/</span>
-          <span className="current">{product.name}</span>
-        </div>
+          <span className="monograph-breadcrumb__separator">/</span>
+          <span className="monograph-breadcrumb__series">{product.seriesNumber}</span>
+          <span className="monograph-breadcrumb__separator">/</span>
+          <span className="monograph-breadcrumb__current">{product.name}</span>
+        </nav>
 
         <a
-          href="#/collection"
-          className="product-monograph__back-btn"
+          href="#/"
+          className="monograph-breadcrumb__home"
           onClick={(e) => {
             e.preventDefault();
-            onNavigate("#/collection");
+            onNavigate("#/");
           }}
         >
-          {"←"} Back to Collection
+          Studio Overview ↗
         </a>
       </div>
 
@@ -115,17 +108,10 @@ export default function ProductDetailPage({
           <div className="product-monograph__viewport">
             <img
               src={activeImage}
-              alt={activeCaption}
+              alt={product.name}
               key={activeImage}
               className="product-monograph__main-img"
             />
-            <div className="product-monograph__badge-row">
-              <span className="series-tag">{product.seriesNumber}</span>
-              <span className="series-year">Est. 2026</span>
-            </div>
-            {activeCaption && (
-              <p className="product-monograph__caption">{activeCaption}</p>
-            )}
           </div>
 
           {/* Interactive State Switcher */}

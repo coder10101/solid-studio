@@ -16,7 +16,10 @@ export default function Header({
   const handleNavClick = (link: { label: string; href: string }) => {
     onCloseMenu();
 
-    if (link.label === "Collection") {
+    if (
+      link.href.startsWith("#/collection") ||
+      link.label.toLowerCase().includes("collection")
+    ) {
       if (onNavigate) {
         onNavigate("#/collection");
       } else {
@@ -70,7 +73,8 @@ export default function Header({
       >
         {navLinks.map((link) => {
           const isLinkActive =
-            link.label === "Collection" && isSubpage;
+            (link.label.toLowerCase().includes("collection") && isSubpage) ||
+            currentRoute === link.href;
           return (
             <a
               key={link.href}
@@ -85,6 +89,14 @@ export default function Header({
             </a>
           );
         })}
+
+        <a
+          href="#contact"
+          className="nav__mobile-contact"
+          onClick={handleContactClick}
+        >
+          Start a project <Arrow />
+        </a>
       </nav>
 
       <a

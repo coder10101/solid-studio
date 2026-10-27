@@ -20,7 +20,27 @@ function FacebookIcon() {
   );
 }
 
-export default function Footer({ contactInfo }: FooterProps) {
+export default function Footer({ contactInfo, onNavigate }: FooterProps) {
+  const handleCollectionClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if (onNavigate) {
+      onNavigate("#/collection");
+    } else {
+      window.location.hash = "#/collection";
+    }
+  };
+
+  const handleScrollTo = (
+    id: string,
+    e: React.MouseEvent<HTMLAnchorElement>,
+  ) => {
+    e.preventDefault();
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   return (
     <footer id="contact">
       <div className="footer__top">
@@ -37,7 +57,7 @@ export default function Footer({ contactInfo }: FooterProps) {
       </div>
 
       <div className="footer__bottom">
-        <BrandMark footer />
+        <BrandMark footer onNavigate={onNavigate} />
         <p>Furniture design studio · Est. 2026</p>
         <div className="socials">
           <a
@@ -57,7 +77,6 @@ export default function Footer({ contactInfo }: FooterProps) {
             <FacebookIcon />
           </a>
         </div>
-        <span>© 2026 Solid Studio</span>
       </div>
     </footer>
   );

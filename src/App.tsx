@@ -85,6 +85,8 @@ export default function App() {
   const isCollectionCatalog =
     route === "#/collection" || route.startsWith("#/collection?");
 
+  const isNestedCollectionPage = isCollectionCatalog || isProductDetail;
+
   return (
     <>
       {introVisible && <IntroScreen />}
@@ -140,15 +142,17 @@ export default function App() {
           )}
         </main>
 
-        <Footer contactInfo={contactInfo} />
-
-        <InquiryModal
-          isOpen={inquiryOpen}
-          onClose={() => setInquiryOpen(false)}
-          selectedPiece={selectedPiece}
-          contactInfo={contactInfo}
-        />
+        {!isNestedCollectionPage && (
+          <Footer contactInfo={contactInfo} onNavigate={navigate} />
+        )}
       </div>
+
+      <InquiryModal
+        isOpen={inquiryOpen}
+        onClose={() => setInquiryOpen(false)}
+        selectedPiece={selectedPiece}
+        contactInfo={contactInfo}
+      />
     </>
   );
 }

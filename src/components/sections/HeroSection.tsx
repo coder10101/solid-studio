@@ -29,23 +29,36 @@ export default function HeroSection({ onNavigate }: HeroProps) {
               way you live, work, and gather.
             </p>
             <a
-              className="text-link"
+              className="hero__collection-cta"
               href="#/collection"
               onClick={handleCollectionClick}
+              aria-label="Explore Full Collection"
             >
-              Explore the collection <Arrow />
+              <span>Explore Full Collection</span> <Arrow />
             </a>
           </div>
         </div>
       </div>
 
-      <figure className="hero__image">
+      <figure
+        className="hero__image hero__image--interactive"
+        onClick={handleCollectionClick}
+        role="link"
+        tabIndex={0}
+        aria-label="Explore Full Collection"
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleCollectionClick(e as any);
+          }
+        }}
+      >
         <img
           alt="Solid Studio dual nesting coffee table in rich walnut with brass vase beside lounge sofa"
           src="/images/dual-coffee-table.jpg"
         />
         <figcaption>
-          <span>01</span>
+          <span>01 / Dual Nesting Table</span>
           <span>Designed for everyday ritual</span>
         </figcaption>
       </figure>

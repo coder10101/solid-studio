@@ -1,8 +1,14 @@
 import type { CollectionProps } from "../../types";
 import Arrow from "../common/Arrow";
 
-export default function CollectionSection({ items, onNavigate }: CollectionProps) {
-  const handleItemClick = (slug: string, e: React.MouseEvent<HTMLAnchorElement>) => {
+export default function CollectionSection({
+  items,
+  onNavigate,
+}: CollectionProps) {
+  const handleItemClick = (
+    slug: string,
+    e: React.MouseEvent<HTMLAnchorElement>,
+  ) => {
     e.preventDefault();
     if (onNavigate) {
       onNavigate(`#/collection/${slug}`);
@@ -27,7 +33,19 @@ export default function CollectionSection({ items, onNavigate }: CollectionProps
           <p className="eyebrow">Selected objects</p>
           <h2>Designed to belong.</h2>
         </div>
-        <p>Our first series explores soft geometry, grounded forms, and everyday comfort.</p>
+        <div className="section-heading__copy">
+          <p>
+            Our first series explores soft geometry, grounded forms, and
+            everyday comfort.
+          </p>
+          <a
+            href="#/collection"
+            className="text-link"
+            onClick={handleCatalogClick}
+          >
+            Explore full series specifications &amp; monographs <Arrow />
+          </a>
+        </div>
       </div>
 
       <div className="product-grid">
@@ -38,7 +56,12 @@ export default function CollectionSection({ items, onNavigate }: CollectionProps
                 href={`#/collection/${item.slug}`}
                 aria-label={`View details and specifications for ${item.name}`}
                 onClick={(e) => handleItemClick(item.slug, e)}
-                style={{ display: "block", width: "100%", height: "100%", cursor: "pointer" }}
+                style={{
+                  display: "block",
+                  width: "100%",
+                  height: "100%",
+                  cursor: "pointer",
+                }}
               >
                 <img
                   alt={item.alt}
@@ -68,7 +91,11 @@ export default function CollectionSection({ items, onNavigate }: CollectionProps
                 <a
                   href={`#/collection/${item.slug}`}
                   onClick={(e) => handleItemClick(item.slug, e)}
-                  style={{ textDecoration: "none", color: "inherit", cursor: "pointer" }}
+                  style={{
+                    textDecoration: "none",
+                    color: "inherit",
+                    cursor: "pointer",
+                  }}
                 >
                   {item.name}
                 </a>
@@ -79,14 +106,14 @@ export default function CollectionSection({ items, onNavigate }: CollectionProps
           </article>
         ))}
       </div>
-
-      <div className="collection__footer-cta">
+      <div className="product-footer">
         <a
           href="#/collection"
-          className="text-link"
+          className="collection__footer-btn"
           onClick={handleCatalogClick}
         >
-          Explore full series specifications &amp; monographs <Arrow />
+          <span>View Full Collection</span>
+          <Arrow diagonal />
         </a>
       </div>
     </section>

@@ -29,6 +29,7 @@ export default function InquiryModal({
       aria-hidden={!isOpen}
     >
       <button
+        type="button"
         className="modal__scrim"
         aria-label="Close enquiry"
         onClick={onClose}
@@ -39,11 +40,21 @@ export default function InquiryModal({
         aria-modal="true"
         aria-labelledby="inquiry-title"
       >
-        <button className="modal__close" onClick={onClose} aria-label="Close">
+        <button
+          type="button"
+          className="modal__close"
+          onClick={onClose}
+          aria-label="Close"
+        >
           {"×"}
         </button>
         <p className="eyebrow">Design &amp; Consultation · Est. 2026</p>
         <h2 id="inquiry-title">{"Let’s start a conversation."}</h2>
+        {selectedPiece && (
+          <p className="modal__target-piece">
+            Regarding: <span>{selectedPiece}</span>
+          </p>
+        )}
         <p>
           Whether you&apos;re ordering from our curated collection or looking for a custom
           furniture consultation tailored to your space and design references, our design

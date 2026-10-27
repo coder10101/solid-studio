@@ -1,7 +1,10 @@
 import type { ServicesProps } from "../../types";
 import Arrow from "../common/Arrow";
 
-export default function ServicesSection({ services }: ServicesProps) {
+export default function ServicesSection({
+  services,
+  onOpenInquiry,
+}: ServicesProps) {
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
@@ -12,6 +15,19 @@ export default function ServicesSection({ services }: ServicesProps) {
   const handleRowClick = (index: number) => {
     if (index === 0) {
       scrollTo("collection");
+    } else {
+      if (onOpenInquiry) {
+        onOpenInquiry("Furniture Consultation");
+      } else {
+        scrollTo("contact");
+      }
+    }
+  };
+
+  const handleDiscussClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if (onOpenInquiry) {
+      onOpenInquiry("Custom Furniture Project");
     } else {
       scrollTo("contact");
     }
@@ -47,7 +63,7 @@ export default function ServicesSection({ services }: ServicesProps) {
             </div>
             <span
               className="service-row__action"
-              aria-label={index === 0 ? "Scroll to Collection" : "Scroll to Contact"}
+              aria-label={index === 0 ? "Scroll to Collection" : "Inquire about furniture consultation"}
             >
               <Arrow diagonal />
             </span>
@@ -57,10 +73,7 @@ export default function ServicesSection({ services }: ServicesProps) {
         <a
           className="button-link"
           href="#contact"
-          onClick={(e) => {
-            e.preventDefault();
-            scrollTo("contact");
-          }}
+          onClick={handleDiscussClick}
         >
           Discuss your project <Arrow />
         </a>

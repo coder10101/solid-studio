@@ -1,197 +1,94 @@
-import { useState } from "react";
 import type { CollectionItem } from "../../types";
 import Arrow from "../common/Arrow";
 
 interface CollectionPageProps {
   items: CollectionItem[];
-  onOpenInquiry: (piece: string) => void;
+  onOpenInquiry?: (piece: string) => void;
   onNavigate: (path: string) => void;
 }
 
 export default function CollectionPage({
   items,
-  onOpenInquiry,
   onNavigate,
 }: CollectionPageProps) {
-  const [activeCategory, setActiveCategory] = useState<string>("All");
-
-  const categories = ["All", "Tables", "Storage"];
-
-  const filteredItems =
-    activeCategory === "All"
-      ? items
-      : items.filter((item) => item.category === activeCategory);
+  const handleItemClick = (slug: string, e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    onNavigate(`#/collection/${slug}`);
+  };
 
   return (
-    <div className="catalog-page">
-      <div className="catalog-page__topbar">
-        <a
-          href="#/"
-          className="catalog-page__back-link"
-          onClick={(e) => {
-            e.preventDefault();
-            onNavigate("#/");
-          }}
-        >
-          {"←"} Back to Studio Overview
-        </a>
-        <span className="catalog-page__status">Series 2026 · Made to Order</span>
+    <section className="collection collection--page" id="collection-page">
+      <div className="collection-page__topbar">
+        <nav className="monograph-breadcrumb" aria-label="Breadcrumb">
+          <a
+            href="#/"
+            className="monograph-breadcrumb__link"
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigate("#/");
+            }}
+          >
+            {"←"} <span>Studio Overview</span>
+          </a>
+          <span className="monograph-breadcrumb__separator">/</span>
+          <span className="monograph-breadcrumb__current">Collection</span>
+        </nav>
       </div>
 
-      <header className="catalog-page__header">
-        <p className="eyebrow">Studio Collection · Series 01</p>
-        <h1 className="catalog-page__title">
-          Considered objects for living, working, and gathering.
-        </h1>
-        <p className="catalog-page__intro">
-          Each piece in our collection is shaped by proportion, enduring materials,
-          and quiet functional moments. Available in our studio series dimensions or
-          custom commissioned to complement your architectural space.
+      <div className="collection-page__heading">
+        <h1 className="collection-page__title">Curated Pieces</h1>
+        <p className="collection-page__lead">
+          Original handcrafted furniture shaped by proportion, enduring materials, and everyday ritual.
         </p>
+      </div>
 
-        <div className="catalog-page__filters" role="tablist" aria-label="Filter collection">
-          {categories.map((cat) => {
-            const count =
-              cat === "All"
-                ? items.length
-                : items.filter((i) => i.category === cat).length;
-            const isActive = activeCategory === cat;
-            return (
-              <button
-                key={cat}
-                type="button"
-                role="tab"
-                aria-selected={isActive}
-                className={`catalog-filter-btn ${isActive ? "is-active" : ""}`}
-                onClick={() => setActiveCategory(cat)}
-              >
-                {cat} <span>({count})</span>
-              </button>
-            );
-          })}
-        </div>
-      </header>
-
-      <div className="catalog-grid">
-        {filteredItems.map((item, index) => (
-          <article className="catalog-card" key={item.slug}>
-            <div className="catalog-card__media">
-              <a
-                href={`#/collection/${item.slug}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate(`#/collection/${item.slug}`);
-                }}
-                className="catalog-card__image-link"
-                aria-label={`View details and specifications for ${item.name}`}
-              >
+      <div className="collection-collage">
+        {items.map((item, index) => (
+          <article
+            className={`collage-card collage-card--0${index + 1}`}
+            key={item.slug}
+          >
+            <a
+              href={`#/collection/${item.slug}`}
+              className="collage-card__media"
+              onClick={(e) => handleItemClick(item.slug, e)}
+              aria-label={`View ${item.name} specifications and details`}
+            >
+              <img
+                src={item.image}
+                alt={item.alt}
+                className={`collage-card__img-primary ${item.secondaryImage ? "has-secondary" : ""}`}
+              />
+              {item.secondaryImage && (
                 <img
-                  src={item.image}
-                  alt={item.alt}
-                  className={`catalog-card__img-primary ${item.secondaryImage ? "has-secondary" : ""}`}
+                  src={item.secondaryImage}
+                  alt={`${item.name} detail view`}
+                  className="collage-card__img-secondary"
+                  aria-hidden="true"
                 />
-                {item.secondaryImage && (
-                  <img
-                    src={item.secondaryImage}
-                    alt={`${item.name} alternative view`}
-                    className="catalog-card__img-secondary"
-                    aria-hidden="true"
-                  />
-                )}
-              </a>
-
-              <span className="catalog-card__index">{item.seriesNumber || `No. 00${index + 1}`}</span>
-
-              <a
-                href={`#/collection/${item.slug}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate(`#/collection/${item.slug}`);
-                }}
-                className="catalog-card__arrow-btn"
-                aria-label={`Open ${item.name} detail`}
-              >
-                <Arrow diagonal />
-              </a>
-            </div>
-
-            <div className="catalog-card__content">
-              <div className="catalog-card__header-row">
-                <span className="catalog-card__type">{item.type}</span>
-                {item.interactiveStates && item.interactiveStates.length > 0 && (
-                  <span className="catalog-card__badge">Multi-State Design</span>
-                )}
-              </div>
-
-              <h2 className="catalog-card__heading">
-                <a
-                  href={`#/collection/${item.slug}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onNavigate(`#/collection/${item.slug}`);
-                  }}
-                >
-                  {item.name}
-                </a>
-              </h2>
-
-              <p className="catalog-card__desc">{item.details}</p>
-
-              {item.specs && (
-                <div className="catalog-card__specs-preview">
-                  <div className="spec-pill">
-                    <small>Dimensions</small>
-                    <span>{item.specs.dimensions.split("|")[0].trim()}</span>
-                  </div>
-                  <div className="spec-pill">
-                    <small>Craft</small>
-                    <span>{item.specs.leadTime}</span>
-                  </div>
-                </div>
               )}
 
-              <div className="catalog-card__actions">
-                <a
-                  href={`#/collection/${item.slug}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onNavigate(`#/collection/${item.slug}`);
-                  }}
-                  className="catalog-card__detail-btn"
-                >
-                  View Monograph &amp; Specs <Arrow />
-                </a>
-                <button
-                  type="button"
-                  onClick={() => onOpenInquiry(`${item.name} (Custom Sizing Inquiry)`)}
-                  className="catalog-card__inquire-btn"
-                >
-                  Inquire
-                </button>
+              <div className="collage-card__overlay">
+                <div className="collage-card__top">
+                  <span className="collage-card__series">{item.seriesNumber}</span>
+                  <span className="collage-card__category">{item.category}</span>
+                </div>
+
+                <div className="collage-card__bottom">
+                  <div className="collage-card__info">
+                    <h2 className="collage-card__title">{item.name}</h2>
+                    <p className="collage-card__sub">{item.type}</p>
+                  </div>
+
+                  <span className="collage-card__action" aria-hidden="true">
+                    <Arrow diagonal />
+                  </span>
+                </div>
               </div>
-            </div>
+            </a>
           </article>
         ))}
       </div>
-
-      <section className="catalog-consultation">
-        <div className="catalog-consultation__inner">
-          <p className="eyebrow">Custom Commissions · Bespoke Sizes</p>
-          <h3>Looking for dimensions tailored to your room?</h3>
-          <p>
-            Every piece in our collection is hand-assembled in our studio. If you need
-            adjusted widths, alternate hardwood finishes, or specific storage configurations,
-            we will gladly tailor the piece to your architectural floor plan.
-          </p>
-          <button
-            type="button"
-            className="primary-button"
-            onClick={() => onOpenInquiry("Custom Collection Commission")}
-          >
-            Start a custom consultation <Arrow />
-          </button>
-        </div>
-      </section>
-    </div>
+    </section>
   );
 }
